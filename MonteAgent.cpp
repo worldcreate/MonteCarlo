@@ -4,14 +4,15 @@
 #include <limits.h>
 #include <algorithm>
 
-#define RANGE 3	// 0~31
+#define RANGE 0	// 0~31
+#define SEED 50
 
 MonteAgent::MonteAgent(){
-	Util::setSeed(100);
+	Util::setSeed(SEED);
 }
 
 MonteAgent::MonteAgent(int t){
-	Util::setSeed(t+100);
+	Util::setSeed(t+SEED);
 }
 
 void MonteAgent::setCityNum(int n){
@@ -49,12 +50,25 @@ std::vector<int> MonteAgent::getCityTurn(){
 	std::vector<int> turn;
 	turn.push_back(0);
 	erase(city,0);
-	for(int i=0;i<cityNum;i++){
+	for(int i=0;i<cityNum-2;i++){
 		int prev=turn[turn.size()-1];
-		int r=Util::getRand(std::min((int)RANGE,(int)city[prev].size()-1),0);
-		turn.push_back(city[prev][r].first);
-		erase(city,city[prev][r].first);
+		//int r=Util::getRand(std::min((int)RANGE,(int)city[prev].size()-1),0);
+		double sum=0;
+		for(int j=0;j<city[prev].size();j++){
+			sum+=city[prev][j].second;
+		}
+		int r=Util::getRand((int)(sum),0);
+		double saving=0;
+		for(int j=0;j<city[prev].size();j++){
+			saving+=sum-city[prev][j].second;
+			if(saving>=r){
+				turn.push_back(city[prev][j].first);
+				erase(city,city[prev][j].first);
+				break;
+			}
+		}
 	}
+	turn.push_back(city[turn.size()-1][0].first);
 	return turn;
 }
 

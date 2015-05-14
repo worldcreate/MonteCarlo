@@ -66,28 +66,26 @@ void Environment::setAgent(Agent* agent){
 
 void Environment::simulate(){
 	std::vector<int> array=agent->getCityTurn();
-	/*
-	for(int i=0;i<array.size();i++){
-		printf("%d ",array[i]);
-	}
-	printf("\n");
-	*/
-	for(int i=0;i<array.size();i++){
-		printf("%d=>",array[i]);
-	}
-	printf("%d",array[0]);
+
 	double sum=0;
 	for(int i=0;i<array.size()-1;i++){
+		#ifdef DEBUG
+			//printf("%d->%d:%lf\n",array[i],array[i+1],cost[array[i]][array[i+1]]);
+		#endif
 		sum+=cost[array[i]][array[i+1]];
 	}
+	#ifdef DEBUG
+		//printf("%d->%d:%lf\n",array[array.size()-1],array[0],cost[array[array.size()-1]][array[0]]);
+	#endif
 	sum+=cost[array[array.size()-1]][array[0]];
-	//printf("fitness=%lf\n",sum);
 	agent->setFitness(sum);
 	if(sum<minFitness){
 		minFitness=sum;
 	}
 
-	printf(":%lf\n",sum);
+	#ifdef DEBUG
+		printf(":%lf\n",sum);
+	#endif
 }
 
 std::vector<std::string> Environment::split(const std::string &str,char delim){
